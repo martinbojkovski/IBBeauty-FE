@@ -42,7 +42,7 @@ const Posts = ({ token }) => {
 
     const fetchPosts = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/post/paginated?page=${page}&size=10`);
+            const response = await fetch(`http://64.227.123.235:8080/post/paginated?page=${page}&size=10`);
             if (!response.ok) throw new Error("Failed to fetch posts");
             const data = await response.json();
             setPosts(data.content);
@@ -58,7 +58,7 @@ const Posts = ({ token }) => {
 
     const handleDeletePost = async () => {
         try {
-            await fetch(`http://localhost:8080/post/delete/${postToDelete.id}`, {
+            await fetch(`http://64.227.123.235:8080/post/delete/${postToDelete.id}`, {
                 method: "DELETE",
                 headers: { "Authorization": `${token}` },
             });
