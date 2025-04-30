@@ -2,6 +2,10 @@
   text-align: center;
 }
 
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -36,3 +40,93 @@
     transform: rotate(360deg);
   }
 }
+
+.rbc-event {
+  margin-bottom: 4px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  padding: 2px 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* This centers the text horizontally */
+  text-align: center; /* Makes multiline text also centered */
+}
+
+.rbc-event-content {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center; /* Just in case there are long event names */
+}
+
+.rbc-row-segment {
+  padding: 1px 0;
+}
+
+@media screen and (max-width: 768px) {
+  .rbc-event {
+    font-size: 10px;
+    padding: 1px 2px;
+  }
+
+  .rbc-header {
+    font-size: 12px;
+  }
+
+  .rbc-time-content > * > * {
+    min-height: 30px !important; /* taller time slots for touch friendliness */
+  }
+}
+
+/* Date Picker Global Styles */
+.MuiPickersPopper-root {
+  z-index: 1500 !important;
+}
+
+/* TextField Input Styling */
+.date-picker-input .MuiOutlinedInput-root {
+  border-radius: 12px !important;
+  border: 2px solid #1f443d !important;
+  background-color: #f8f8f8 !important;
+}
+
+.date-picker-input .MuiOutlinedInput-root:hover {
+  border-color: #1f443d !important;
+}
+
+.date-picker-input .MuiInputLabel-root {
+  color: #1f443d !important;
+  font-weight: bold !important;
+}
+
+/* Calendar Popup Styling */
+.MuiPickersCalendarHeader-root {
+  background-color: #1f443d !important;
+  color: white !important;
+  padding: 16px !important;
+}
+
+.MuiPickersDay-root {
+  font-size: 0.9rem !important;
+}
+
+.MuiPickersDay-root.Mui-selected {
+  background-color: #1f443d !important;
+  color: white !important;
+}
+
+.MuiPickersDay-root:hover {
+  background-color: rgba(31, 68, 61, 0.1) !important;
+}
+
+.MuiPickersMonth-root.Mui-selected,
+.MuiPickersYear-root.Mui-selected {
+  background-color: #1f443d !important;
+  color: white !important;
+}
+
+
+
