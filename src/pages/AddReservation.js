@@ -31,7 +31,7 @@ const AddReservation = ({ token }) => {
 
     const fetchReservation = async () => {
         try {
-            const response = await fetch(`http://64.227.123.235:8080/reservation/${id}`, {
+            const response = await fetch(`https://64.227.123.235:8080/reservation/${id}`, {
                 headers: { "Authorization": `${token}` }
             });
             if (!response.ok) throw new Error("Failed to fetch reservation");
@@ -70,7 +70,7 @@ const AddReservation = ({ token }) => {
         e.preventDefault();
         try {
             const method = id ? "PATCH" : "POST";
-            const url = id ? `http://64.227.123.235:8080/reservation/edit` : `http://64.227.123.235:8080/reservation/insert`;
+            const url = id ? `https://64.227.123.235:8080/reservation/edit` : `https://64.227.123.235:8080/reservation/insert`;
 
             // Format data before sending
             const formattedData = {
