@@ -70,7 +70,7 @@ const Reservations = ({ token }) => {
 
     const fetchReservations = async () => {
         try {
-            const response = await fetch("http://localhost:8080/reservation", {
+            const response = await fetch("http://64.227.123.235:8080/reservation", {
             });
             if (!response.ok) throw new Error("Failed to fetch reservations");
 
@@ -116,7 +116,7 @@ const Reservations = ({ token }) => {
 
     const handleDeleteReservation = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/reservation/delete/${selectedEvent.id}`, {
+            const response = await fetch(`http://64.227.123.235:8080/reservation/delete/${selectedEvent.id}`, {
                 method: "DELETE",
                 headers: { Authorization: `${token}` }
             });
