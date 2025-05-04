@@ -123,7 +123,7 @@ function Appbar() {
                             <Button
                                 component={Link}
                                 to="/login"
-                                sx={{ color: 'white', display: 'block' }}
+                                sx={{ color: 'white', display: 'block', opacity: 0 }}
                             >
                                 Login
                             </Button>
