@@ -70,7 +70,7 @@ const Reservations = ({ token }) => {
 
     const fetchReservations = async () => {
         try {
-            const response = await fetch("https://64.227.123.235:8443/reservation", {
+            const response = await fetch("http://localhost:8080/reservation", {
             });
             if (!response.ok) throw new Error("Failed to fetch reservations");
 
@@ -78,7 +78,8 @@ const Reservations = ({ token }) => {
             setEvents(
                 data.map((res) => ({
                     id: res.id,
-                    title: res.name,
+                    title: "Reserved",
+                    originalName: res.name,
                     start: new Date(res.reservationStart),
                     end: new Date(res.reservationEnd),
                     type: res.type,
@@ -308,7 +309,7 @@ const Reservations = ({ token }) => {
                     </DialogTitle>
                     <DialogContent sx={{ p: 3, bgcolor: "#f0f0f0" }}>
                         <Typography variant="h6">
-                            <strong>Name:</strong> {selectedEvent?.title}
+                            <strong>Name:</strong> {selectedEvent?.originalName || "Reserved"}
                         </Typography>
                         <Typography variant="h6">
                             <strong>Start:</strong> {moment(selectedEvent?.start).format("HH:mm")}
