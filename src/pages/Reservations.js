@@ -45,9 +45,7 @@ const Reservations = ({ token }) => {
     }, [token]);
 
     useEffect(() => {
-        // When monthDate changes, set the calendar to the first day of that month
-        const firstDayOfMonth = moment(monthDate).startOf('month').toDate();
-        setCurrentDate(firstDayOfMonth);
+        setCurrentDate(moment(monthDate).toDate());
     }, [monthDate]);
 
     const validateToken = () => {
@@ -212,7 +210,7 @@ const Reservations = ({ token }) => {
                         {/* Month Picker */}
                         {isMobile ? (
                             <MobileDatePicker
-                                views={['year', 'month']}
+                                views={['year', 'month', 'day']}
                                 label="Select Month"
                                 minDate={moment().subtract(1, 'year')}
                                 maxDate={moment().add(1, 'year')}
@@ -236,7 +234,7 @@ const Reservations = ({ token }) => {
                             />
                         ) : (
                             <DesktopDatePicker
-                                views={['year', 'month']}
+                                views={['year', 'month', 'day']}
                                 label="Select Month"
                                 minDate={moment().subtract(1, 'year')}
                                 maxDate={moment().add(1, 'year')}
