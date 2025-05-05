@@ -58,11 +58,11 @@ const Posts = ({ token }) => {
 
     const handleDeletePost = async () => {
         try {
-            await fetch(`/api/post/delete/${postToDelete.id}`, {
+            await fetch(`/api/post/delete/${postToDelete.Id}`, {
                 method: "DELETE",
                 headers: { "Authorization": `${token}` },
             });
-            setPosts(posts.filter(post => post.id !== postToDelete.id));
+            setPosts(posts.filter(post => post.Id !== postToDelete.Id));
             setOpenDeleteDialog(false);
         } catch (error) {
             console.error("Error deleting post:", error);
@@ -77,7 +77,7 @@ const Posts = ({ token }) => {
                 </Typography>
                 <Grid container spacing={isMobile ? 1 : 2} justifyContent="center">
                     {posts.map((post) => (
-                        <Grid item xs={12} key={post.id}>
+                        <Grid item xs={12} key={post.Id}>
                             <Card sx={{ borderRadius: 3, boxShadow: 3, overflow: "hidden" }}>
                                 <CardMedia
                                     component="img"
@@ -95,7 +95,7 @@ const Posts = ({ token }) => {
                                     </Typography>
                                     {isLoggedIn && (
                                         <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: 2 }}>
-                                            <Button variant="contained" color="primary" onClick={() => handleEditPost(post.id)} startIcon={<Edit />}>
+                                            <Button variant="contained" color="primary" onClick={() => handleEditPost(post.Id)} startIcon={<Edit />}>
                                                 Edit
                                             </Button>
                                             <Button
