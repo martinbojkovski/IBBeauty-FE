@@ -19,7 +19,7 @@ const Login = () => {
         setError('');
 
         try {
-            const response = await fetch('https://64.227.123.235:8443/jwt/generate', {
+            const response = await fetch('/api/jwt/generate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

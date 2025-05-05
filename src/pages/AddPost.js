@@ -14,7 +14,7 @@ const AddPost = ({ token }) => {
     useEffect(() => {
 
         if (postId) {
-            fetch(`https://64.227.123.235:8443/post/${postId}`, {
+            fetch(`/api/post/${postId}`, {
                 headers: {
                     "Authorization": `${token}`,
                 }
@@ -50,7 +50,7 @@ const AddPost = ({ token }) => {
             let response;
             if (existingPost) {
                 
-                response = await fetch("https://64.227.123.235:8443/post/edit", {
+                response = await fetch("/api/post/edit", {
                     method: "PATCH",
                     headers: {
                         "Authorization": `${token}`,
@@ -59,7 +59,7 @@ const AddPost = ({ token }) => {
                 });
             } else {
                 
-                response = await fetch("https://64.227.123.235:8443/post/insert", {
+                response = await fetch("/api/post/insert", {
                     method: "POST",
                     headers: {
                         "Authorization": `${token}`,
