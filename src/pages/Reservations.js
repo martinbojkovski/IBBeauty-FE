@@ -39,11 +39,16 @@ const Reservations = ({ token }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-    useEffect(() => {
-        validateToken();
-        fetchReservations();
-    }, [token]);
+    const fetched = useRef(false);
 
+    useEffect(() => {
+        if (!fetched.current) {
+            validateToken();
+            fetchReservations();
+            fetched.current = true;
+        }
+    }, [token]);
+    
     useEffect(() => {
         setCurrentDate(moment(monthDate).toDate());
     }, [monthDate]);
