@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -23,10 +23,11 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { AuthContext } from '../AuthContext';
 
 const localizer = momentLocalizer(moment);
 
-const Reservations = ({ token }) => {
+const Reservations = () => {
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState(null);
@@ -34,7 +35,7 @@ const Reservations = ({ token }) => {
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [currentDate, setCurrentDate] = useState(new Date());
     const [monthDate, setMonthDate] = useState(moment());
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { token, logout } = useContext(AuthContext);
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -43,33 +44,26 @@ const Reservations = ({ token }) => {
 
     useEffect(() => {
         if (!fetched.current) {
-            validateToken();
-            fetchReservations();
+            try {
+                if (token) {
+                    const decoded = jwtDecode(token);
+                    if (decoded.exp < Date.now() / 1000) {
+                        logout();
+                    } else {
+                        fetchReservations();
+                    }
+                }
+            } catch (e) {
+                console.error("Invalid token", e);
+                logout();
+            }
             fetched.current = true;
         }
-    }, [token]);
-    
+    }, [token, logout]);
+
     useEffect(() => {
         setCurrentDate(moment(monthDate).toDate());
     }, [monthDate]);
-
-    const validateToken = () => {
-        if (token) {
-            try {
-                const decoded = jwtDecode(token);
-                if (decoded.exp < Date.now() / 1000) {
-                    localStorage.removeItem("token");
-                    setIsLoggedIn(false);
-                } else {
-                    setIsLoggedIn(true);
-                }
-            } catch (error) {
-                console.error("Error decoding token:", error);
-                localStorage.removeItem("token");
-                setIsLoggedIn(false);
-            }
-        }
-    };
 
     const fetchReservations = async () => {
         try {
@@ -81,7 +75,7 @@ const Reservations = ({ token }) => {
             setEvents(
                 data.map((res) => ({
                     id: res.id,
-                    title: res.person === "IVANA" ? "IVANA" : "SONJA",  // Set title based on person
+                    title: res.person === "IVANA" ? "IVANA" : "SONJA",
                     originalName: res.name,
                     person: res.person,
                     start: new Date(res.reservationStart),
@@ -96,7 +90,7 @@ const Reservations = ({ token }) => {
     };
 
     const handleSelectEvent = (event) => {
-        if (isLoggedIn) {
+        if (token) {
             setSelectedEvent(event);
             setOpenDialog(true);
         }
@@ -128,8 +122,8 @@ const Reservations = ({ token }) => {
             if (!response.ok) throw new Error("Failed to delete reservation");
 
             setEvents(events.filter((event) => event.id !== selectedEvent.id));
-            handleCloseDeleteDialog(); // Close delete confirmation dialog
-            handleCloseDialog(); // Close details dialog
+            handleCloseDeleteDialog();
+            handleCloseDialog();
         } catch (error) {
             console.error("Error deleting reservation:", error);
         }
@@ -160,7 +154,7 @@ const Reservations = ({ token }) => {
                         position: "relative",
                     }}
                 >
-                    {isLoggedIn && (
+                    {token && (
                         <Button
                             variant="contained"
                             color="success"
@@ -346,7 +340,7 @@ const Reservations = ({ token }) => {
                         <Button onClick={handleCloseDialog} color="primary" variant="outlined">
                             Close
                         </Button>
-                        {isLoggedIn && (
+                        {token && (
                             <>
                                 <Button
                                     onClick={handleEditReservation}

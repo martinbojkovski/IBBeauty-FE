@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext();
 
@@ -15,12 +16,40 @@ export const AuthProvider = ({ children }) => {
         setToken(null);
     };
 
+    // Handle token expiration
+    const checkTokenValidity = () => {
+        const storedToken = localStorage.getItem("token");
+        if (!storedToken) {
+            setToken(null);
+            return;
+        }
+
+        try {
+            const decoded = jwtDecode(storedToken);
+            const currentTime = Date.now() / 1000; // seconds
+            if (decoded.exp < currentTime) {
+                // Token expired
+                logout();
+            } else {
+                setToken(storedToken);
+            }
+        } catch (error) {
+            console.error("Invalid token:", error);
+            logout();
+        }
+    };
+
     useEffect(() => {
-        const handleStorageChange = () => {
-            setToken(localStorage.getItem("token"));
-        };
+        checkTokenValidity(); // Run once on mount
+
+        const interval = setInterval(checkTokenValidity, 5000); // Check every 5s
+        const handleStorageChange = () => checkTokenValidity(); // Sync across tabs
+
         window.addEventListener("storage", handleStorageChange);
-        return () => window.removeEventListener("storage", handleStorageChange);
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener("storage", handleStorageChange);
+        };
     }, []);
 
     return (
