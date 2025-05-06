@@ -77,14 +77,22 @@ const Posts = ({ token }) => {
                 </Typography>
                 <Grid container spacing={isMobile ? 1 : 2} justifyContent="center">
                     {posts.map((post) => (
-                        <Grid item xs={12} key={post.Id}>
+                        <Grid item xs={12} md={9} key={post.Id}>
                             <Card sx={{ borderRadius: 3, boxShadow: 3, overflow: "hidden" }}>
                                 <CardMedia
                                     component="img"
-                                    height={isMobile ? "200" : "400"}
+                                    height={isMobile ? "400" : "600"}
                                     image={`data:image/png;base64,${post.photo}`}
                                     alt="Post image"
-                                    sx={{ objectFit: "cover" }}
+                                    sx={{
+                                        width: "100%",
+                                        height: "auto",
+                                        maxHeight: isMobile ? 400 : 600,
+                                        objectFit: "contain", 
+                                        backgroundColor: "#f0f0f0", 
+                                        display: "block",
+                                        margin: "0 auto",
+                                    }}
                                 />
                                 <CardContent>
                                     <Typography variant="body1" sx={{ fontSize: isMobile ? "0.9rem" : "1rem", lineHeight: 1.5 }}>
