@@ -44,22 +44,10 @@ const Reservations = () => {
 
     useEffect(() => {
         if (!fetched.current) {
-            try {
-                if (token) {
-                    const decoded = jwtDecode(token);
-                    if (decoded.exp < Date.now() / 1000) {
-                        logout();
-                    } else {
-                        fetchReservations();
-                    }
-                }
-            } catch (e) {
-                console.error("Invalid token", e);
-                logout();
-            }
+            fetchReservations();
             fetched.current = true;
         }
-    }, [token, logout]);
+    }, []);
 
     useEffect(() => {
         setCurrentDate(moment(monthDate).toDate());
