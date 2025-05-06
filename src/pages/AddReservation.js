@@ -9,6 +9,7 @@ import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import dayjs from "dayjs";
 
+const PersonEnum = ["IVANA", "SONJA"];
 const ServiceEnum = ["MAKEUP", "LASHES", "NAILS", "EYE_BROWS"]; // Enum options
 
 const AddReservation = ({ token }) => {
@@ -16,10 +17,11 @@ const AddReservation = ({ token }) => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: "",
+        person: "",
         date: null,
         start: null,
         end: null,
-        type: [],  // Ensure it's an array for the multi-select
+        type: [],
         description: ""
     });
 
@@ -37,13 +39,13 @@ const AddReservation = ({ token }) => {
             if (!response.ok) throw new Error("Failed to fetch reservation");
             const data = await response.json();
 
-            // Update the formData with the correct field names
             setFormData({
                 name: data.name,
-                date: data.reservationStart ? dayjs(data.reservationStart) : null,  // Keep as dayjs object
-                start: data.reservationStart ? dayjs(data.reservationStart) : null,   // Keep as dayjs object
-                end: data.reservationEnd ? dayjs(data.reservationEnd) : null,         // Keep as dayjs object
-                type: data.type || [],  // Ensure it's always an array
+                date: data.reservationStart ? dayjs(data.reservationStart) : null,
+                person: data.person || "",
+                start: data.reservationStart ? dayjs(data.reservationStart) : null,
+                end: data.reservationEnd ? dayjs(data.reservationEnd) : null,
+                type: data.type || [],
                 description: data.description || ""
             });
 
@@ -74,8 +76,9 @@ const AddReservation = ({ token }) => {
 
             // Format data before sending
             const formattedData = {
-                Id: id || undefined,  // Include the id only if it's an edit
+                Id: id || undefined,
                 name: formData.name,
+                person: formData.person,
                 start: formData.start && formData.date
                     ? dayjs(formData.date).set("hour", formData.start.hour()).set("minute", formData.start.minute()).set("second", 0).format("YYYY-MM-DD[T]HH:mm:ss")
                     : null,
@@ -126,6 +129,23 @@ const AddReservation = ({ token }) => {
                             placeholder="Name"
                             variant="outlined"
                         />
+                    </Grid>
+
+                    {/* Person Field */}
+                    <Grid item xs={12}>
+                        <FormControl fullWidth required>
+                            <InputLabel>Person</InputLabel>
+                            <Select
+                                name="person"
+                                value={formData.person}
+                                onChange={handleChange}
+                                label="Person"
+                            >
+                                {PersonEnum.map((p) => (
+                                    <MenuItem key={p} value={p}>{p}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Grid>
 
                     <LocalizationProvider dateAdapter={AdapterDayjs}>

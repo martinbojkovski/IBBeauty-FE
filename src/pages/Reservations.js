@@ -81,8 +81,9 @@ const Reservations = ({ token }) => {
             setEvents(
                 data.map((res) => ({
                     id: res.id,
-                    title: "Reserved",
+                    title: res.person === "IVANA" ? "IVANA" : "SONJA",  // Set title based on person
                     originalName: res.name,
+                    person: res.person,
                     start: new Date(res.reservationStart),
                     end: new Date(res.reservationEnd),
                     type: res.type,
@@ -292,17 +293,28 @@ const Reservations = ({ token }) => {
                         }}
                         min={new Date(0, 0, 0, 5, 0, 0)} // Start at 5:00 AM
                         max={new Date(0, 0, 0, 23, 59, 0)} // End at 11:00 PM
-                        eventPropGetter={(event) => ({
-                            style: {
-                                backgroundColor: "#0c880c",
-                                color: "white",
-                                borderRadius: "8px",
-                                border: "1px solid #006600",
-                                padding: "2px 4px",
-                                boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
-                                marginBottom: "4px",
-                            },
-                        })}
+                        eventPropGetter={(event) => {
+                            let backgroundColor = "#0c880c";  // Default color for Ivana
+                            let floatDirection = "left";       // Default position for Ivana
+                            if (event.person === "SONJA") {
+                                backgroundColor = "#6b1470";  // Greenish-blue color for Sonja
+                                floatDirection = "right";     // Position Sonja's events to the right
+                            }
+
+                            return {
+                                style: {
+                                    backgroundColor: backgroundColor,
+                                    color: "white",
+                                    borderRadius: "8px",
+                                    border: "1px solid #006600",
+                                    padding: "2px 4px",
+                                    boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
+                                    marginBottom: "4px",
+                                    float: floatDirection,
+                                    clear: "both",
+                                },
+                            };
+                        }}
                     />
                 </Box>
 
@@ -313,6 +325,9 @@ const Reservations = ({ token }) => {
                     <DialogContent sx={{ p: 3, bgcolor: "#f0f0f0" }}>
                         <Typography variant="h6">
                             <strong>Name:</strong> {selectedEvent?.originalName || "Reserved"}
+                        </Typography>
+                        <Typography variant="h6">
+                            <strong>Working:</strong> {selectedEvent?.person || "Reserved"}
                         </Typography>
                         <Typography variant="h6">
                             <strong>Start:</strong> {moment(selectedEvent?.start).format("HH:mm")}
