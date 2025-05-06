@@ -108,7 +108,7 @@ const AddReservation = ({ token }) => {
     };
 
     return (
-        <Box component={Paper} elevation={3} sx={{ padding: 3, maxWidth: 600, margin: 'auto', marginTop: 4 }}>
+        <Box component={Paper} elevation={3} sx={{ padding: 3, maxWidth: 600, margin: 'auto', marginTop: 4, marginBottom: 4 }}>
             <Typography variant="h4" align="center" gutterBottom>
                 {id ? "Edit Reservation" : "Add Reservation"}
             </Typography>

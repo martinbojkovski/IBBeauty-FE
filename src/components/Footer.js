@@ -5,7 +5,7 @@ const Footer = () => {
     return (
         <Box sx={{
             backgroundColor: '#1f443d',
-            padding: '10px 0',
+            padding: '2px 0',
             position: 'fixed',
             bottom: 0,
             left: 0,
@@ -14,7 +14,7 @@ const Footer = () => {
             zIndex: 999, // Ensure it stays on top
         }}>
             <Typography variant="body2" color="white">
-                Copyright &copy; Martin Bojkovski 2025
+                 &copy; Martin Bojkovski - 2025
             </Typography>
         </Box>
     );

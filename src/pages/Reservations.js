@@ -212,11 +212,11 @@ const Reservations = ({ token }) => {
                             </Button>
                         </Box>
 
-                        {/* Month Picker */}
+                        {/* Date Picker */}
                         {isMobile ? (
                             <MobileDatePicker
                                 views={['year', 'month', 'day']}
-                                label="Select Month"
+                                label="Select Date"
                                 minDate={moment().subtract(1, 'year')}
                                 maxDate={moment().add(1, 'year')}
                                 value={monthDate}
@@ -240,7 +240,7 @@ const Reservations = ({ token }) => {
                         ) : (
                             <DesktopDatePicker
                                 views={['year', 'month', 'day']}
-                                label="Select Month"
+                                label="Select Date"
                                 minDate={moment().subtract(1, 'year')}
                                 maxDate={moment().add(1, 'year')}
                                 value={monthDate}
