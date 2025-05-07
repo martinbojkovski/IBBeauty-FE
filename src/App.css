@@ -127,3 +127,15 @@ body {
   background-color: #1f443d !important;
   color: white !important;
 }
+
+/* Center the content of the event and make the text bold */
+.rbc-event-content {
+  display: flex;
+  justify-content: center;  /* Horizontally center */
+  align-items: center;      /* Vertically center */
+  height: 100%;
+  width: 100%;
+  text-align: center;       /* Ensure the text is centered inside */
+  font-size: 1rem;        /* Increase the font size */
+}
+

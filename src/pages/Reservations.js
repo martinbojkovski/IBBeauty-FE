@@ -60,8 +60,12 @@ const Reservations = () => {
             if (!response.ok) throw new Error("Failed to fetch reservations");
 
             const data = await response.json();
-            setEvents(
-                data.map((res) => ({
+            setEvents(data
+                .sort((a, b) => {
+                    if (a.person === b.person) return 0;
+                    return a.person === "IVANA" ? -1 : 1;
+                })
+                .map((res) => ({
                     id: res.id,
                     title: res.person === "IVANA" ? "IVANA" : "SONJA",
                     originalName: res.name,
@@ -276,24 +280,19 @@ const Reservations = () => {
                         min={new Date(0, 0, 0, 5, 0, 0)} // Start at 5:00 AM
                         max={new Date(0, 0, 0, 23, 59, 0)} // End at 11:00 PM
                         eventPropGetter={(event) => {
-                            let backgroundColor = "#0c880c";  // Default color for Ivana
-                            let floatDirection = "left";       // Default position for Ivana
+                            let backgroundColor = "#1f443d";
                             if (event.person === "SONJA") {
-                                backgroundColor = "#6b1470";  // Greenish-blue color for Sonja
-                                floatDirection = "right";     // Position Sonja's events to the right
+                                backgroundColor = "#58855C";
                             }
-
                             return {
                                 style: {
                                     backgroundColor: backgroundColor,
                                     color: "white",
                                     borderRadius: "8px",
-                                    border: "1px solid #006600",
+                                    border: "none",
                                     padding: "2px 4px",
                                     boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
                                     marginBottom: "4px",
-                                    float: floatDirection,
-                                    clear: "both",
                                 },
                             };
                         }}
