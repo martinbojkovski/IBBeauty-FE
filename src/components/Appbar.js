@@ -1,36 +1,90 @@
 import * as React from 'react';
 import {
     AppBar, Box, Toolbar, IconButton, Typography,
-    Menu, MenuItem, Button, Container
+    Drawer, List, ListItem, ListItemText, Button, Container, Divider
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 import { Link } from 'react-router-dom';
 import { useContext, useState } from 'react';
-import { AuthContext } from '../AuthContext'; // Adjust path as needed
+import { AuthContext } from '../AuthContext';
 
 const pages = ['Posts', 'Reservations', 'Services', 'Pricing', 'Contact'];
 
 function Appbar() {
-    const [anchorElNav, setAnchorElNav] = useState(null);
-    const { token } = useContext(AuthContext); // Get token from context
-
-    const handleOpenNavMenu = (event) => {
-        setAnchorElNav(event.currentTarget);
-    };
-
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
-    };
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const { token } = useContext(AuthContext);
 
     const isLoggedIn = Boolean(token);
+
+    const toggleDrawer = (open) => () => {
+        setDrawerOpen(open);
+    };
+
+    const drawer = (
+        <Box
+            sx={{
+                width: 250,
+                height: '100%',
+                backgroundColor: '#1f443d',
+                color: 'white',
+            }}
+            role="presentation"
+        >
+            {/* Logo and Close Icon */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
+                <Link
+                    to="/"
+                    onClick={toggleDrawer(false)}
+                    style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
+                >
+                    <Box
+                        component="img"
+                        src="/logo.jpeg"
+                        alt="Logo"
+                        sx={{ width: 35, height: 35, mr: 1 }}
+                    />
+                </Link>
+                <IconButton onClick={toggleDrawer(false)} sx={{ color: 'white' }}>
+                    <CloseIcon />
+                </IconButton>
+            </Box>
+            <Divider sx={{ backgroundColor: 'rgba(255,255,255,0.2)' }} />
+
+            {/* Navigation items */}
+            <List>
+                {pages.map((page) => (
+                    <ListItem
+                        button
+                        key={page}
+                        component={Link}
+                        to={`/${page.toLowerCase()}`}
+                        onClick={toggleDrawer(false)}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            }
+                        }}
+                    >
+                        <ListItemText
+                            primary={
+                                <Typography sx={{ fontWeight: 'bold', color: 'white' }}>
+                                    {page}
+                                </Typography>
+                            }
+                        />
+                    </ListItem>
+                ))}
+            </List>
+        </Box>
+    );
 
     return (
         <AppBar position="sticky" sx={{ backgroundColor: '#1f443d' }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
 
-                    {/* Logo */}
-                    <Link to="/" style={{ textDecoration: 'none' }}>
+                    <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
                         <Box
                             component="img"
                             src="/logo.jpeg"
@@ -39,34 +93,21 @@ function Appbar() {
                         />
                     </Link>
 
-                    {/* Mobile Menu */}
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
-                            onClick={handleOpenNavMenu}
+                            onClick={toggleDrawer(true)}
                             color="inherit"
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Menu
-                            anchorEl={anchorElNav}
-                            open={Boolean(anchorElNav)}
-                            onClose={handleCloseNavMenu}
-                            anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-                            transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-                            sx={{ display: { xs: 'block', md: 'none' } }}
+                        <Drawer
+                            anchor="left"
+                            open={drawerOpen}
+                            onClose={toggleDrawer(false)}
                         >
-                            {pages.map((page) => (
-                                <MenuItem
-                                    key={page}
-                                    component={Link}
-                                    to={`/${page.toLowerCase()}`}
-                                    onClick={handleCloseNavMenu}
-                                >
-                                    {page}
-                                </MenuItem>
-                            ))}
-                        </Menu>
+                            {drawer}
+                        </Drawer>
                     </Box>
 
                     {/* Desktop Menu */}
@@ -83,7 +124,6 @@ function Appbar() {
                         ))}
                     </Box>
 
-                    {/* Right-side */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         {isLoggedIn ? (
                             <Typography variant="body1" sx={{ color: 'white' }}>
@@ -93,7 +133,7 @@ function Appbar() {
                             <Button
                                 component={Link}
                                 to="/login"
-                                sx={{ color: 'white', display: 'block', opacity: 0 }}
+                                sx={{ color: 'white', opacity: 0 }}
                             >
                                 Login
                             </Button>
