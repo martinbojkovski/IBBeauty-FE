@@ -60,13 +60,8 @@ const Reservations = () => {
             if (!response.ok) throw new Error("Failed to fetch reservations");
 
             const data = await response.json();
-            
-            const parsedEvents = data
-                .sort((a, b) => {
-                    if (a.person === b.person) return 0;
-                    return a.person === "IVANA" ? -1 : 1;
-                })
-                .map((res) => ({
+            setEvents(
+                data.map((res) => ({
                     id: res.id,
                     title: res.person === "IVANA" ? "IVANA" : "SONJA",
                     originalName: res.name,
@@ -75,32 +70,8 @@ const Reservations = () => {
                     end: new Date(res.reservationEnd),
                     type: res.type,
                     description: res.description,
-                }));
-
-
-            const withSoloFlag = parsedEvents.map((event, _, arr) => {
-                const overlaps = arr.filter(e => {
-                    if (e.id === event.id) return false;
-
-                    const startA = event.start.getTime();
-                    const endA = event.end.getTime();
-                    const startB = e.start.getTime();
-                    const endB = e.end.getTime();
-
-                    const overlap =
-                        (startA < endB && endA > startB) ||
-                        (startA === startB && endA === endB);
-
-                    return overlap;
-                });
-
-                return {
-                    ...event,
-                    solo: overlaps.length === 0,
-                };
-            });
-
-            setEvents(withSoloFlag);
+                }))
+            );
         } catch (error) {
             console.error("Error fetching reservations:", error);
         }
@@ -157,22 +128,6 @@ const Reservations = () => {
         setCurrentDate(moment(currentDate).subtract(isMobile ? 1 : 1, isMobile ? "days" : "weeks").toDate());
 
     const handleToday = () => setCurrentDate(new Date());
-
-    const CustomEventWrapper = ({ event, children }) => {
-        const isIvana = event.person === "IVANA";
-        const isSolo = event.solo;
-
-        const className = isSolo
-            ? isIvana
-                ? "ivana-solo"
-                : "sonja-solo"
-            : isIvana
-                ? "ivana-event"
-                : "sonja-event";
-
-        return <div className={className}>{children}</div>;
-    };
-
 
     return (
         <LocalizationProvider dateAdapter={AdapterMoment}>
@@ -312,6 +267,7 @@ const Reservations = () => {
                         toolbar={false}
                         step={15}
                         timeslots={4}
+                        dayLayoutAlgorithm="no-overlap"
                         formats={{
                             timeGutterFormat: "HH:mm",
                             dayFormat: "dddd, MMMM Do",
@@ -319,21 +275,25 @@ const Reservations = () => {
                         }}
                         min={new Date(0, 0, 0, 5, 0, 0)} // Start at 5:00 AM
                         max={new Date(0, 0, 0, 23, 59, 0)} // End at 11:00 PM
-                        components={{
-                            eventWrapper: CustomEventWrapper,
-                        }}
                         eventPropGetter={(event) => {
-                            const backgroundColor = event.person === "SONJA" ? "#6b1470" : "#0c880c";
+                            let backgroundColor = "#0c880c";  // Default color for Ivana
+                            let floatDirection = "left";       // Default position for Ivana
+                            if (event.person === "SONJA") {
+                                backgroundColor = "#6b1470";  // Greenish-blue color for Sonja
+                                floatDirection = "right";     // Position Sonja's events to the right
+                            }
+
                             return {
                                 style: {
-                                    backgroundColor,
+                                    backgroundColor: backgroundColor,
                                     color: "white",
                                     borderRadius: "8px",
                                     border: "1px solid #006600",
                                     padding: "2px 4px",
                                     boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
-                                    marginLeft: "5px",
-                                    height: "100%", // very important
+                                    marginBottom: "4px",
+                                    float: floatDirection,
+                                    clear: "both",
                                 },
                             };
                         }}
