@@ -127,3 +127,39 @@ body {
   background-color: #1f443d !important;
   color: white !important;
 }
+
+.ivana-event {
+  position: absolute !important;
+  left: 0% !important;
+  width: 48% !important;
+  height: 100% !important;
+  top: 0;
+}
+
+.sonja-event {
+  position: absolute !important;
+  left: 28% !important;
+  width: 48% !important;
+  height: 100% !important;
+  top: 0;
+}
+
+.ivana-solo {
+  position: absolute !important;
+  left: 0% !important;
+  width: 48% !important;
+  height: 100% !important;
+  top: 0;
+}
+
+.sonja-solo {
+  position: absolute !important;
+  left: 52% !important;
+  width: 48% !important;
+  height: 100% !important;
+  top: 0;
+}
+
+.rbc-event {
+  width: 100% !important;
+}
