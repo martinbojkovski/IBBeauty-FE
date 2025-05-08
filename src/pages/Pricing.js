@@ -28,7 +28,7 @@ const Pricing = () => {
         {
             title: "НОКТИ",
             services: [
-                { name: "Rubber base", price: "500ден"}
+                { name: "Rubber base", price: "500ден"},
                 { name: "Гел на природни нокти", price: "700ден" },
                 { name: "Налив до должина 2", price: "750ден" },
                 { name: "Корекција до должина 2", price: "750ден" },
