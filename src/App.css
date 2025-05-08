@@ -152,4 +152,7 @@ body {
   left: 52% !important;
 }
 
+.rbc-current-time-indicator {
+  display: none !important;
+}
 
