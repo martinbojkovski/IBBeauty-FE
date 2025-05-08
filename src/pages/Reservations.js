@@ -281,12 +281,17 @@ const Reservations = () => {
                         max={new Date(0, 0, 0, 23, 59, 0)} // End at 11:00 PM
                         eventPropGetter={(event) => {
                             let backgroundColor = "#1f443d";
+                            let className = "event-ivana";
+
                             if (event.person === "SONJA") {
                                 backgroundColor = "#58855C";
+                                className = "event-sonja";
                             }
+
                             return {
+                                className,
                                 style: {
-                                    backgroundColor: backgroundColor,
+                                    backgroundColor,
                                     color: "white",
                                     borderRadius: "8px",
                                     border: "none",
