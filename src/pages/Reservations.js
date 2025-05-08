@@ -67,7 +67,10 @@ const Reservations = () => {
                 })
                 .map((res) => ({
                     id: res.id,
-                    title: res.person === "IVANA" ? "IVANA" : "SONJA",
+                    title:
+                        res.person === "IVANA"
+                            ? `IVANA\n${moment(res.reservationStart).format("HH:mm")} - ${moment(res.reservationEnd).format("HH:mm")}`
+                            : `SONJA\n${moment(res.reservationStart).format("HH:mm")} - ${moment(res.reservationEnd).format("HH:mm")}`,
                     originalName: res.name,
                     person: res.person,
                     start: new Date(res.reservationStart),
@@ -125,13 +128,24 @@ const Reservations = () => {
         navigate("/reservations/add");
     };
 
-    const handleNext = () =>
-        setCurrentDate(moment(currentDate).add(isMobile ? 1 : 1, isMobile ? "days" : "weeks").toDate());
+    const handleNext = () => {
+        const nextDate = moment(currentDate).add(isMobile ? 1 : 1, isMobile ? "days" : "weeks");
+        setCurrentDate(nextDate.toDate());
+        setMonthDate(nextDate); // Sync with DatePicker
+    };
 
-    const handleBack = () =>
-        setCurrentDate(moment(currentDate).subtract(isMobile ? 1 : 1, isMobile ? "days" : "weeks").toDate());
+    const handleBack = () => {
+        const prevDate = moment(currentDate).subtract(isMobile ? 1 : 1, isMobile ? "days" : "weeks");
+        setCurrentDate(prevDate.toDate());
+        setMonthDate(prevDate); // Sync with DatePicker
+    };
 
-    const handleToday = () => setCurrentDate(new Date());
+    const handleToday = () => {
+        const today = moment();
+        setCurrentDate(today.toDate());
+        setMonthDate(today); // Sync with DatePicker
+    };
+
 
     return (
         <LocalizationProvider dateAdapter={AdapterMoment}>
@@ -298,6 +312,7 @@ const Reservations = () => {
                                     padding: "2px 4px",
                                     boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
                                     marginBottom: "4px",
+                                    whiteSpace: "pre-line"  // add this
                                 },
                             };
                         }}

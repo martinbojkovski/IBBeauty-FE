@@ -136,7 +136,8 @@ body {
   height: 100%;
   width: 100%;
   text-align: center;       /* Ensure the text is centered inside */
-  font-size: 1rem;        /* Increase the font size */
+  font-size: 0.8rem;        /* Increase the font size */
+  white-space: pre-line;
 }
 
 /* Force 50% width and place Ivana's on the left */
