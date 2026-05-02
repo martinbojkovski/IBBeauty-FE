@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef, useContext, useMemo } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -16,7 +16,6 @@ import {
     useMediaQuery,
     TextField
 } from "@mui/material";
-import { jwtDecode } from "jwt-decode";
 import { ArrowBack, ArrowForward, Today, AddCircle, Edit, Delete } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -24,6 +23,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AuthContext } from '../AuthContext';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const localizer = momentLocalizer(moment);
 
@@ -41,6 +41,13 @@ const Reservations = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const fetched = useRef(false);
+
+    moment.updateLocale("en", {
+        week: {
+            dow: new Date().getDay(),
+            doy: 1,
+        },
+    });
 
     useEffect(() => {
         if (!fetched.current) {
@@ -67,14 +74,11 @@ const Reservations = () => {
                 })
                 .map((res) => ({
                     id: res.id,
-                    title:
-                        res.person === "IVANA"
-                            ? `IVANA\n${moment(res.reservationStart).format("HH:mm")} - ${moment(res.reservationEnd).format("HH:mm")}`
-                            : `SONJA\n${moment(res.reservationStart).format("HH:mm")} - ${moment(res.reservationEnd).format("HH:mm")}`,
+                    title: `RESERVED\n${moment(res.reservationStart).format("HH:mm")} - ${moment(res.reservationEnd).format("HH:mm")}`,
                     originalName: res.name,
                     person: res.person,
-                    start: new Date(res.reservationStart),
-                    end: new Date(res.reservationEnd),
+                    start: moment(res.reservationStart).local().toDate(),
+                    end: moment(res.reservationEnd).local().toDate(),
                     type: res.type,
                     description: res.description,
                 }))
@@ -85,10 +89,26 @@ const Reservations = () => {
     };
 
     const handleSelectEvent = (event) => {
-        if (token) {
-            setSelectedEvent(event);
-            setOpenDialog(true);
+
+        // 1️⃣ FREE SLOT → ADD NEW (only if logged in)
+        if (event.isFree) {
+            if (!token) return;
+
+            navigate("/reservations/add", {
+                state: {
+                    start: event.start,
+                    end: event.end,
+                    person: event.person,
+                },
+            });
+            return; // ⬅️ CRITICAL: stop here
         }
+
+        // 2️⃣ TAKEN APPOINTMENT → EDIT (only if logged in)
+        if (!token) return;
+
+        setSelectedEvent(event);
+        setOpenDialog(true);
     };
 
     const handleCloseDialog = () => {
@@ -146,10 +166,82 @@ const Reservations = () => {
         setMonthDate(today); // Sync with DatePicker
     };
 
+    const generateFreeSlots = (events, slotMinutes = 90) => {
+        const FREE_SLOT_START = moment().subtract(0, "days").startOf("day"); // 14 days ago
+        const FREE_SLOT_END = moment().add(1, "month").endOf("day");
+        const people = ["IVANA", "SONJA"];
+        const startHour = 8;
+        const endHour = 20;
+
+        const allSlots = [];
+
+        let dayCursor = FREE_SLOT_START.clone();
+
+        while (dayCursor.isSameOrBefore(FREE_SLOT_END, "day")) {
+            const dayStart = dayCursor.clone().hour(startHour).minute(0);
+            const dayEnd = dayCursor.clone().hour(endHour).minute(0);
+
+            people.forEach(person => {
+                // Get busy slots for this person
+                const busy = events
+                    .filter(e => e.person === person && !e.isFree)
+                    .map(e => ({
+                        start: moment(e.start),
+                        end: moment(e.end),
+                    }));
+
+                let timeCursor = dayStart.clone();
+
+                while (timeCursor.isBefore(dayEnd)) {
+                    const slotStart = timeCursor.clone();
+                    const slotEnd = timeCursor.clone().add(slotMinutes, "minutes");
+
+                    const overlaps = busy.some(b =>
+                        slotStart.isBefore(b.end) && slotEnd.isAfter(b.start)
+                    );
+
+                    if (!overlaps && slotEnd.isSameOrBefore(dayEnd)) {
+                        const slotTitle = token
+                            ? `ADD\n${slotStart.format("HH:mm")} - ${slotEnd.format("HH:mm")}`
+                            : `FREE\n${slotStart.format("HH:mm")} - ${slotEnd.format("HH:mm")}`;
+
+                        allSlots.push({
+                            id: `free-${person}-${slotStart.toISOString()}`,
+                            title: slotTitle,
+                            start: slotStart.toDate(),
+                            end: slotEnd.toDate(),
+                            person,
+                            isFree: true,
+                            isAddSlot: token ? true : false
+                        });
+                    }
+
+                    timeCursor.add(slotMinutes, "minutes");
+                }
+            });
+
+            dayCursor.add(1, "day");
+        }
+
+       return allSlots;
+    };
+
+    const calendarEvents = useMemo(() => {
+        const freeSlots = generateFreeSlots(events, 90);
+
+        const displayEvents = events.map((event) => ({
+            ...event,
+            title: token
+                ? `${event.originalName}\n${moment(event.start).format("HH:mm")} - ${moment(event.end).format("HH:mm")}`
+                : `RESERVED\n${moment(event.start).format("HH:mm")} - ${moment(event.end).format("HH:mm")}`,
+        }));
+
+        return [...displayEvents, ...freeSlots];
+    }, [events, token]);
 
     return (
         <LocalizationProvider dateAdapter={AdapterMoment}>
-            <Paper elevation={4} sx={{ p: 2, bgcolor: "#f5f5f5", borderRadius: "10px", height: "100vh" }}>
+            <Paper elevation={4} sx={{ p: 2, bgcolor: "white", borderRadius: "10px", height: "auto" }}>
                 <Toolbar
                     sx={{
                         display: "flex",
@@ -191,7 +283,7 @@ const Reservations = () => {
                                 color="success"
                                 fullWidth={isMobile}
                             >
-                                {isMobile ? "Previous" : "Back"}
+                                {isMobile ? "Prev" : "Prev"}
                             </Button>
                             <Button
                                 onClick={handleToday}
@@ -265,12 +357,57 @@ const Reservations = () => {
                         )}
                     </Box>
                 </Toolbar>
+                <Toolbar>
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: "16px",
+                            justifyContent: isMobile ? "center" : "flex-start",
+                            paddingLeft: isMobile ? 0 : "25px",
+                            width: "100%",
+                        }}
+                    >
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                            <div
+                                style={{
+                                    width: 24,
+                                    height: 24,
+                                    backgroundColor: "#1f443d",
+                                    border: "1px solid black",
+                                }}
+                            />
+                            <span style={{ fontWeight: "bold" }}>IVANA</span>
+                        </div>
+
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                            <div
+                                style={{
+                                    width: 24,
+                                    height: 24,
+                                    backgroundColor: "#58855C",
+                                    border: "1px solid black",
+                                }}
+                            />
+                            <span style={{ fontWeight: "bold" }}>SONJA</span>
+                        </div>
+                    </div>
+                </Toolbar>
+
 
                 {/* Full screen calendar */}
-                <Box sx={{ mt: 3, bgcolor: "#fff", p: 2, borderRadius: "10px", height: "calc(100vh - 150px)" }}>
+                <Box
+                    sx={{
+                        mt: 3,
+                        bgcolor: "#fff",
+                        p: 2,
+                        borderRadius: "10px",
+                        overflow: "hidden", // 👈 important
+                    }}
+                >
                     <Calendar
                         localizer={localizer}
-                        events={events}
+                        events={calendarEvents}
                         startAccessor="start"
                         endAccessor="end"
                         views={["week", "day"]}
@@ -278,6 +415,22 @@ const Reservations = () => {
                         date={currentDate}
                         onNavigate={setCurrentDate}
                         onSelectEvent={handleSelectEvent}
+                        components={{
+                            event: ({ event }) => {
+                                // If it's a free slot with + icon
+                                if (event.isAddSlot) {
+                                    return (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                            <AddCircleIcon style={{ fontSize: 24, color: 'white' }} />
+                                            <span style={{ fontSize: 12 }}>{event.title.split("\n")[1]}</span>
+                                        </div>
+                                    );
+                                }
+
+                                // Default event rendering
+                                return <span>{event.title}</span>;
+                            },
+                        }}
                         style={{
                             height: "100%",
                             width: "100%",
@@ -302,20 +455,58 @@ const Reservations = () => {
                                 className = "event-sonja";
                             }
 
-                            return {
-                                className,
-                                style: {
-                                    backgroundColor,
-                                    color: "white",
-                                    borderRadius: "8px",
-                                    border: "none",
-                                    padding: "2px 4px",
-                                    boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
-                                    marginBottom: "4px",
-                                    whiteSpace: "pre-line"  // add this
-                                },
-                            };
+                            // FREE SLOTS
+                            if (event.isFree) {
+
+                                // NOT LOGGED IN
+                                if (!token) {
+                                    return {
+                                        className,
+                                        style: {
+                                            backgroundColor,
+                                            color: "white",
+                                            borderRadius: "8px",
+                                            border: "none",
+                                            padding: "2px 4px",
+                                            boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
+                                            marginBottom: "4px",
+                                            whiteSpace: "pre-line"  // add this
+                                        },
+                                    };
+                                }
+                                // LOGGED IN
+                                return {
+                                    className,
+                                    style: {
+                                        backgroundColor,
+                                        color: "white",
+                                        borderRadius: "8px",
+                                        border: "none",
+                                        padding: "2px 4px",
+                                        boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
+                                        marginBottom: "4px",
+                                        whiteSpace: "pre-line"  // add this
+                                    },
+                                };
+                            }else {
+                                // TAKEN → RED
+                                return {
+                                    className,
+                                    style: {
+                                        backgroundColor: "#d32f2f",
+                                        color: "white",
+                                        borderRadius: "8px",
+                                        border: "none",
+                                        padding: "2px 4px",
+                                        boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
+                                        marginBottom: "4px",
+                                        whiteSpace: "pre-line"  // add this
+
+                                    },
+                                };
+                            }
                         }}
+
                     />
                 </Box>
 
@@ -329,6 +520,9 @@ const Reservations = () => {
                         </Typography>
                         <Typography variant="h6">
                             <strong>Working:</strong> {selectedEvent?.person || "Reserved"}
+                        </Typography>
+                        <Typography variant="h6">
+                            <strong>Date:</strong> {moment(selectedEvent?.start).format("MMMM D YYYY")}
                         </Typography>
                         <Typography variant="h6">
                             <strong>Start:</strong> {moment(selectedEvent?.start).format("HH:mm")}

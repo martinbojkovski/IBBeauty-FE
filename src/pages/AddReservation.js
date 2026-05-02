@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
     Box, Button, TextField, Typography, Grid, Paper, MenuItem,
     Select, InputLabel, FormControl, Chip
@@ -24,12 +24,22 @@ const AddReservation = ({ token }) => {
         type: [],
         description: ""
     });
+    const location = useLocation();
+    const { start, end, person } = location.state || {};
 
     useEffect(() => {
         if (id) {
             fetchReservation();
         }
-    }, [id]);
+        if (!id && start && end && person) {
+            setFormData(prev => ({
+                ...prev,
+                person: person,
+                date: dayjs(start),
+                start: dayjs(start),
+                end: dayjs(end),
+            }));
+        }}, [id, start, end, person]);
 
     const fetchReservation = async () => {
         try {
@@ -140,6 +150,7 @@ const AddReservation = ({ token }) => {
                                 value={formData.person}
                                 onChange={handleChange}
                                 label="Person"
+                                disabled={!id && !!person}
                             >
                                 {PersonEnum.map((p) => (
                                     <MenuItem key={p} value={p}>{p}</MenuItem>
@@ -155,6 +166,7 @@ const AddReservation = ({ token }) => {
                                 label="Reservation Date"
                                 value={formData.date}
                                 onChange={handleDateChange}
+                                disabled={!id && !!person}
                                 slotProps={{ textField: { fullWidth: true, required: true } }}
                             />
                         </Grid>

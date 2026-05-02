@@ -83,13 +83,11 @@ const styles = {
     },
     leftSection: {
         flex: 1,
-        paddingRight: '20px',
         minWidth: '300px', // Prevent shrinking too much on mobile
         maxWidth: '600px', // Limit width on larger screens
     },
     rightSection: {
         flex: 1,
-        paddingLeft: '20px',
         minWidth: '300px', // Prevent shrinking too much on mobile
         maxWidth: '600px', // Limit width on larger screens
     },
