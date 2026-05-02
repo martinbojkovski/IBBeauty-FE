@@ -132,7 +132,7 @@ const About = () => {
                             <Grid item md={6}>
                                 <motion.div initial={{ opacity: 0, y: 60 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
                                     <Typography variant="h4" sx={{ fontWeight: "bold", color: "#1f443d", mb: 3 }}>
-                                        ЗА МЕНЕ
+                                        ЗА ИВАНА
                                     </Typography>
 
                                     <Typography sx={{ fontSize: "1.1rem", lineHeight: 1.8, mb: 2 }}>
