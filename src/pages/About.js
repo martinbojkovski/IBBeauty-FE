@@ -38,6 +38,28 @@ const About = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
+    const ScrollWrapper = styled(Box)({
+        scrollSnapType: "y proximity",   // ← "proximity" instead of "mandatory" = less aggressive snapping
+        height: "100dvh",                // ← "dvh" accounts for iOS dynamic toolbar (address bar + footer)
+        overflowY: "auto",
+        scrollBehavior: "smooth",
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+        "&::-webkit-scrollbar": { display: "none" }
+    });
+
+    const Section = styled(Box)(({ theme }) => ({
+        minHeight: "100dvh",             // ← match wrapper, use dvh here too
+        scrollSnapAlign: "start",
+        scrollSnapStop: "always",        // ← prevents fast-scrolling past sections
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingTop: "30px",              // ← breathing room at top
+        paddingBottom: "80px",           // ← prevents footer overlap on iOS
+        boxSizing: "border-box",
+    }));
+
     return (
         <ScrollWrapper>
 
@@ -106,7 +128,7 @@ const About = () => {
                     <Container maxWidth="sm">
                         <motion.div initial={{ opacity: 0, y: 60 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} style={{ textAlign: "center" }}>
                             <Typography variant="h4" sx={{ fontWeight: "bold", color: "#1f443d", mb: 3 }}>
-                                ЗА МЕНЕ
+                                ЗА ИВАНА
                             </Typography>
 
                             <StyledImage src="/Ivana.png" alt="Ivana Bozinovska" style={{ marginBottom: 20 }} />
