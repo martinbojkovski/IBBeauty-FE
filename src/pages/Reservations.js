@@ -24,6 +24,7 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AuthContext } from '../AuthContext';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { CircularProgress } from "@mui/material";
 import { readCache, writeCache } from "../utils/Cache";
 
 
@@ -146,6 +147,7 @@ const Reservations = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [monthDate, setMonthDate] = useState(moment());
     const { token, logout } = useContext(AuthContext);
+    const [loading, setLoading] = useState(false);
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -194,6 +196,7 @@ const Reservations = () => {
             return;
         }
 
+        setLoading(true);
         try {
             const response = await fetch("/api/reservation", {
             });
@@ -209,6 +212,8 @@ const Reservations = () => {
 
         } catch (error) {
             console.error("Error fetching reservations:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -328,6 +333,26 @@ const Reservations = () => {
         dayFormat: "dddd, MMMM Do",
         eventTimeRangeFormat: () => "",
     }), []);
+
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "60vh",
+                    gap: 2
+                }}
+            >
+                <CircularProgress sx={{ color: "success.main" }} />
+                <Typography sx={{ color: "success.main", fontWeight: 500 }}>
+                    Loading...
+                </Typography>
+            </Box>
+        );
+    }
 
     return (
         <LocalizationProvider dateAdapter={AdapterMoment}>
