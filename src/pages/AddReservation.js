@@ -8,6 +8,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import dayjs from "dayjs";
+import {readCache, writeCache} from "../utils/Cache";
 
 const PersonEnum = ["IVANA", "SONJA"];
 const ServiceEnum = ["MAKEUP", "LASHES", "NAILS", "EYE_BROWS"]; // Enum options
@@ -109,6 +110,18 @@ const AddReservation = ({ token }) => {
             console.log(token)
 
             if (!response.ok) throw new Error("Failed to save reservation");
+
+            const cached = readCache()
+            if (method === "POST") {
+                const newReservation = await response.json();
+                writeCache([...cached, newReservation]);
+            } else {
+                const updatedReservation = await response.json();
+                const updated = cached.map(r =>
+                    r.id === updatedReservation.id ? updatedReservation : r
+                );
+                writeCache(updated);
+            }
 
             navigate("/reservations");
         } catch (error) {
