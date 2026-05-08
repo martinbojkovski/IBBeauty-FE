@@ -10,12 +10,16 @@ import { useContext, useState } from 'react';
 import { AuthContext } from '../AuthContext';
 
 const pages = ['Posts', 'Reservations', 'Services', 'Pricing', 'Contact'];
+const protectedPages = ['Customers']; // Only visible when logged in
 
 function Appbar() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const { token } = useContext(AuthContext);
 
     const isLoggedIn = Boolean(token);
+
+    // Combine pages based on auth state
+    const visiblePages = isLoggedIn ? [...pages, ...protectedPages] : pages;
 
     const toggleDrawer = (open) => () => {
         setDrawerOpen(open);
@@ -53,7 +57,7 @@ function Appbar() {
 
             {/* Navigation items */}
             <List>
-                {pages.map((page) => (
+                {visiblePages.map((page) => (
                     <ListItem
                         button
                         key={page}
@@ -112,7 +116,7 @@ function Appbar() {
 
                     {/* Desktop Menu */}
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages.map((page) => (
+                        {visiblePages.map((page) => (
                             <Button
                                 key={page}
                                 component={Link}

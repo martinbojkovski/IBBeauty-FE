@@ -13,6 +13,7 @@ import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import Services from "./pages/Services"
 import Pricing from "./pages/Pricing"
+import Customers from "./pages/Customers"
 
 function App() {
     const { token } = useContext(AuthContext);
@@ -36,6 +37,7 @@ function App() {
                 <Route path="/posts/edit/:postId" element={<AddPost token={token} />} />
                 <Route path="/reservations/add" element={<AddReservation token={token} />} />
                 <Route path="/reservations/edit/:id" element={<AddReservation token={token} />} />
+                <Route path="/customers" element={<Customers token={token} />} />
             </Routes>
         </Router>
     );
