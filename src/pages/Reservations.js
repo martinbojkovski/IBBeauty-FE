@@ -50,7 +50,7 @@ const CAL_MAX = new Date(0, 0, 0, 23, 59, 0);
 // Only depends on `events`, not on `token`.
 const generateFreeSlots = (events) => {
     const FREE_SLOT_START = moment().startOf("day");
-    const FREE_SLOT_END = moment().add(1, "month").endOf("day");
+    const FREE_SLOT_END = moment().add(3, "month").endOf("day");
 
     const allSlots = [];
 
@@ -188,12 +188,14 @@ const Reservations = () => {
             });
     };
 
-    const fetchReservations = async () => {
-        // 1. Try cache
-        const cached = readCache();
-        if (cached) {
-            setEvents(mapReservations(cached)); // ✅ reuse
-            return;
+    const fetchReservations = async (forceRefresh = false) => {
+        // 1. Try cache (skip if forceRefresh)
+        if (!forceRefresh) {
+            const cached = readCache();
+            if (cached) {
+                setEvents(mapReservations(cached));
+                return;
+            }
         }
 
         setLoading(true);
@@ -204,10 +206,9 @@ const Reservations = () => {
 
             const data = await response.json();
 
-            // 2. Save RAW data
+            // Refresh cache with the latest server data
             writeCache(data);
 
-            // 3. Map once
             setEvents(mapReservations(data));
 
         } catch (error) {
@@ -291,11 +292,9 @@ const Reservations = () => {
             });
             if (!response.ok) throw new Error("Failed to delete reservation");
 
-            const cached = readCache();
-            const updated = cached.filter(r => r.id !== selectedEvent.id);
-            writeCache(updated);
+            // Re-fetch fresh data from the server instead of patching the cache
+            await fetchReservations(true);
 
-            setEvents((prev) => prev.filter((e) => e.id !== selectedEvent.id));
             handleCloseDeleteDialog();
             handleCloseDialog();
         } catch (error) {
