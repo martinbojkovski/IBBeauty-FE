@@ -51,7 +51,7 @@ const Section = styled(Box)(({ theme, bg }) => ({
     boxSizing: "border-box",
     background: bg || COLORS.ivory,
     [theme.breakpoints.down("md")]: {
-        paddingTop: "88px",
+        paddingTop: "30px",
     },
 }));
 

@@ -103,7 +103,7 @@ function Contact() {
     }, []);
 
     return (
-        <Box sx={{ backgroundColor: COLORS.ivory, py: { xs: 8, md: 12 } }}>
+        <Box sx={{ backgroundColor: COLORS.ivory, py: { xs: 4, md: 8 } }}>
             <Container maxWidth="lg">
                 <Box sx={{ textAlign: "center", mb: { xs: 6, md: 8 } }}>
                     <Eyebrow sx={{ justifyContent: "center", display: "flex" }}>Контакт</Eyebrow>
