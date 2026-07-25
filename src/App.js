@@ -14,11 +14,14 @@ import { AuthContext } from "./AuthContext";
 import Services from "./pages/Services"
 import Pricing from "./pages/Pricing"
 import Customers from "./pages/Customers"
+import {ThemeProvider} from "@mui/material";
+import theme from "./theme";
 
 function App() {
     const { token } = useContext(AuthContext);
 
     return (
+        <ThemeProvider theme={theme}>
         <Router>
             {/* Appbar is now inside the Router to be part of routing */}
             <Appbar />
@@ -40,6 +43,7 @@ function App() {
                 <Route path="/customers" element={<Customers token={token} />} />
             </Routes>
         </Router>
+        </ThemeProvider>
     );
 }
 
