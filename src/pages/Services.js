@@ -1,120 +1,192 @@
-import { Box, Container, Grid, Typography, Card, CardContent, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Container, Grid, Typography } from '@mui/material';
 
-const Services = () => {
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+/*
+  Uses the same COLORS/Eyebrow tokens as Contact.jsx and HomePage.jsx.
+  If you've already pulled those into a shared file (e.g. src/theme/tokens.js),
+  delete the local copies below and import from there instead.
+*/
 
-    const services = [
-        {
-            id: 1,
-            title: "Шминка",
-            description: "Шминка е есклузивна услуга во нашиот салон прилагодена на вашите уникатни потреби и стил. Користиме само најквалитетни производи кои гарантираат долготраен ефект и природен изглед. Ние сме тука да ви помогнеме да се чувствувате убаво, самоуверено и спремни за секоја прилика."
-        },
-        {
-            id: 2,
-            title: "Нокти",
-            description: "Маникир е услуга која ги облагородува вашите нокти, создавајќи здрав и негуван изглед. Нашата понуда е широка, без разлика дали сакате класичен маникир, модерни дизајни или rubber, ние користиме најквалитетни материјали и техники за долготраен резултат. Вашите нокти секогаш ќе изгледаат прекрасно и здраво."
-        },
-        {
-            id: 3,
-            title: "Екстензии на трепки",
-            description: "Екстензии на трепки се вештачки трепки кои се внимателно прикачени на вашите природни трепки, создавајќи ефект на подолги, погусти и поголеми трепки. Овие трепки изгледаат природно и се изведуваат во различни стилови и должини, во зависност од вашите желби. Екстензиите се идеални за секојдневен изглед, како и за специјални настани, и траат од неколку недели."
-        },
-        {
-            id: 4,
-            title: "Лифтинг и ботокс на трепки",
-            description: "Лифтинг на трепки е професионална услуга која ги подигнува, витка и истакнува вашите природни трепки, давајќи им подолг, поголем и повеќе отворен изглед на очите. Процесот е безболен и брз, без потреба од маскара или вештачки трепки. Резултатите се долготрајни, со природен ефект што трае и до 6 недели. Ова е идеален начин да ги истакнете вашите трепки и да добиете неверојатен изглед без дополнителен напор!"
-        },
-        {
-            id: 5,
-            title: "Лифтинг и ботокс на веѓи",
-            description: "Лифтинг на веѓи е неинвазивна процедура која го подигнува и оформува контурот на веѓите, враќајќи им помлад и свеж изглед. Овој третман влијае на кератинска структура на влакното, што го омекнува и ви дозволува да ја дибиете најидеалната форма на вашата веѓа."
-        }
-    ];
+// ---------- Tokens (keep in sync with Contact.jsx / HomePage.jsx) ----------
+const COLORS = {
+    forest: "#1F443D",
+    pine: "#14302B",
+    ivory: "#FBF7F2",
+    rose: "#B98289",
+    gold: "#B08D57",
+    ink: "#24312D",
+};
 
-    return (
-        <Container maxWidth="lg" sx={{ py: 6 }}>
+const Eyebrow = ({ children, sx }) => (
+    <Typography
+        sx={{
+            fontFamily: "'Mulish', sans-serif",
+            fontWeight: 700,
+            letterSpacing: "0.18em",
+            fontSize: "0.8rem",
+            color: COLORS.gold,
+            textTransform: "uppercase",
+            mb: 1.5,
+            ...sx,
+        }}
+    >
+        {children}
+    </Typography>
+);
+
+const services = [
+    {
+        id: "01",
+        title: "Шминка",
+        description:
+            "Есклузивна услуга прилагодена на вашите уникатни потреби и стил. Користиме само најквалитетни производи кои гарантираат долготраен ефект и природен изглед — тука сме да ве направиме убави, самоуверени и спремни за секоја прилика.",
+    },
+    {
+        id: "02",
+        title: "Нокти",
+        description:
+            "Маникир која ги облагородува вашите нокти, создавајќи здрав и негуван изглед. Без разлика дали сакате класичен маникир, модерни дизајни или rubber, користиме најквалитетни материјали и техники за долготраен резултат.",
+    },
+    {
+        id: "03",
+        title: "Екстензии на трепки",
+        description:
+            "Вештачки трепки внимателно прикачени на вашите природни, за ефект на подолги, погусти и поголеми трепки. Изгледаат природно, се изведуваат во различни стилови и должини, и траат од неколку недели — идеални за секој ден и за специјални настани.",
+    },
+    {
+        id: "04",
+        title: "Лифтинг и ботокс на трепки",
+        description:
+            "Професионална услуга која ги подигнува, витка и истакнува вашите природни трепки, за подолг и поотворен изглед на очите. Безболен и брз процес, без потреба од маскара — резултатите се долготрајни и траат до 6 недели.",
+    },
+    {
+        id: "05",
+        title: "Лифтинг и ботокс на веѓи",
+        description:
+            "Неинвазивна процедура која го подигнува и оформува контурот на веѓите, враќајќи им помлад и свеж изглед. Влијае на кератинската структура на влакното, го омекнува и дозволува да се добие најидеалната форма на веѓата.",
+    },
+    {
+        id: "06",
+        title: "Депилација",
+        description: "Професионална услуга за отстранување на непосакуваните влакна, користејќи најквалитетни материјали и техники за нежно и ефикасно отстранување. Резултатите се долготрајни и кожата останува мазна и негувана.",
+    }
+];
+
+const ServiceRow = ({ id, title, description, isLast }) => (
+    <Box
+        sx={{
+            display: "flex",
+            gap: { xs: 2.5, md: 4 },
+            py: { xs: 3.5, md: 4.5 },
+            borderBottom: isLast ? "none" : `1px solid rgba(31,68,61,0.12)`,
+            transition: "padding-left 0.3s ease",
+            "&:hover": {
+                pl: { md: 1 },
+            },
+            "&:hover .service-title": {
+                color: COLORS.rose,
+            },
+        }}
+    >
+        <Typography
+            sx={{
+                fontFamily: "'Playfair Display', serif",
+                fontStyle: "italic",
+                fontWeight: 600,
+                fontSize: { xs: "1.4rem", md: "1.8rem" },
+                color: COLORS.gold,
+                flexShrink: 0,
+                width: { xs: 40, md: 60 },
+                lineHeight: 1,
+            }}
+        >
+            {id}
+        </Typography>
+
+        <Box sx={{ flexGrow: 1 }}>
             <Typography
-                variant="h3"
-                align="center"
-                gutterBottom
+                className="service-title"
+                variant="h5"
+                component="h3"
                 sx={{
-                    color: '#1f443d',
-                    fontWeight: 'bold',
-                    mb: 6,
-                    [theme.breakpoints.down('sm')]: {
-                        fontSize: '2rem'
-                    }
+                    fontFamily: "'Playfair Display', serif",
+                    fontWeight: 600,
+                    color: COLORS.forest,
+                    mb: 1,
+                    fontSize: { xs: "1.35rem", md: "1.6rem" },
+                    transition: "color 0.3s ease",
                 }}
             >
-                ЗА НАШИТЕ УСЛУГИ
+                {title}
             </Typography>
+            <Typography
+                sx={{
+                    fontFamily: "'Mulish', sans-serif",
+                    color: COLORS.ink,
+                    opacity: 0.85,
+                    fontSize: { xs: "0.95rem", md: "1rem" },
+                    lineHeight: 1.75,
+                    maxWidth: 640,
+                }}
+            >
+                {description}
+            </Typography>
+        </Box>
+    </Box>
+);
 
-            <Grid container spacing={4}>
-                {services.map((service) => (
-                    <Grid item xs={12} sm={6} md={4} key={service.id}>
-                        <Card
-                            sx={{
-                                height: '100%',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                border: `2px solid #1f443d`,
-                                borderRadius: '12px',
-                                transition: 'transform 0.3s, box-shadow 0.3s',
-                                '&:hover': {
-                                    transform: 'translateY(-5px)',
-                                    boxShadow: theme.shadows[6]
-                                }
-                            }}
-                        >
-                            <CardContent sx={{ flexGrow: 1 }}>
-                                <Typography
-                                    variant="h5"
-                                    component="h3"
-                                    gutterBottom
-                                    sx={{
-                                        color: '#1f443d',
-                                        fontWeight: 'bold',
-                                        display: 'flex',
-                                        alignItems: 'center'
-                                    }}
-                                >
-                                    <Box
-                                        component="span"
-                                        sx={{
-                                            backgroundColor: '#1f443d',
-                                            color: 'white',
-                                            borderRadius: '50%',
-                                            width: 30,
-                                            height: 30,
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            mr: 2,
-                                            fontSize: '1rem'
-                                        }}
-                                    >
-                                        {service.id}
-                                    </Box>
-                                    {service.title}
-                                </Typography>
-                                <Typography
-                                    sx={{
-                                        fontSize: '1rem',
-                                        lineHeight: 1.7,
-                                        [theme.breakpoints.down('sm')]: {
-                                            fontSize: '0.95rem'
-                                        }
-                                    }}
-                                >
-                                    {service.description}
-                                </Typography>
-                            </CardContent>
-                        </Card>
+const Services = () => {
+    return (
+        <Box sx={{ backgroundColor: COLORS.ivory, py: { xs: 4, md: 8 } }}>
+            <Container maxWidth="lg">
+                <Grid container spacing={{ xs: 4, md: 8 }}>
+                    {/* ---------- Left: sticky heading ---------- */}
+                    <Grid item xs={12} md={4}>
+                        <Box sx={{ position: { md: "sticky" }, top: { md: 120 } }}>
+                            <Eyebrow>Услуги</Eyebrow>
+                            <Typography
+                                variant="h3"
+                                sx={{
+                                    fontFamily: "'Playfair Display', serif",
+                                    fontWeight: 600,
+                                    color: COLORS.forest,
+                                    fontSize: { xs: "2rem", md: "2.6rem" },
+                                    lineHeight: 1.15,
+                                    mb: 2,
+                                }}
+                            >
+                                За нашите услуги
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    fontFamily: "'Mulish', sans-serif",
+                                    color: COLORS.ink,
+                                    opacity: 0.75,
+                                    fontSize: "1rem",
+                                    lineHeight: 1.7,
+                                    maxWidth: 380,
+                                }}
+                            >
+                                Шест услуги, изработени со внимание на деталот и најквалитетни
+                                материјали, за изглед што трае.
+                            </Typography>
+                        </Box>
                     </Grid>
-                ))}
-            </Grid>
-        </Container>
+
+                    {/* ---------- Right: service list ---------- */}
+                    <Grid item xs={12} md={8}>
+                        <Box>
+                            {services.map((service, index) => (
+                                <ServiceRow
+                                    key={service.id}
+                                    {...service}
+                                    isLast={index === services.length - 1}
+                                />
+                            ))}
+                        </Box>
+                    </Grid>
+                </Grid>
+            </Container>
+        </Box>
     );
 };
 
